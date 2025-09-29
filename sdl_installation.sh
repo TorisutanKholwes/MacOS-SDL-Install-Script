@@ -49,24 +49,30 @@ show_menu() {
   echo ""
 }
 
-# Clean up installed libraries
-clean_installations() {
+# Clean up all installed libraries
+clean_all_installations() {
   echo -e "${BLUE}Cleaning installed SDL Lib...${NC}"
   for lib in "${OPTIONS[@]}"; do
-    if lib_exists "$lib"; then
-      echo -e "${BLUE}Removing ${lib}...${NC}"
-      sudo rm -rf "${INCLUDE_DIR}${lib}"
-      sudo rm -rf ${LIB_DIR}lib${lib}.*
-      if [[ "$lib" == "SDL3" ]]; then
-        sudo rm -rf ${LIB_DIR}libSDL3_test.*
-      fi
-      sudo rm -rf "${CONFIG_DIR}${lib}"
-      echo -e "${GREEN}${lib} removed successfully.${NC}"
-    else
-      echo -e "${RED}${lib} is not installed. Skipping...${NC}"
-    fi
+    clean_installation "$lib"
   done
   echo -e "${GREEN}Cleanup finished.${NC}"
+}
+
+# Clean up a specific library
+clean_installation() {
+  local lib=$1
+  if lib_exists "$lib"; then
+    echo -e "${BLUE}Removing ${lib}...${NC}"
+    sudo rm -rf "${INCLUDE_DIR}${lib}"
+    sudo rm -rf ${LIB_DIR}lib${lib}.*
+    if [[ "$lib" == "SDL3" ]]; then
+      sudo rm -rf ${LIB_DIR}libSDL3_test.*
+    fi
+    sudo rm -rf "${CONFIG_DIR}${lib}"
+    echo -e "${GREEN}${lib} removed successfully.${NC}"
+  else
+    echo -e "${RED}${lib} is not installed. Skipping...${NC}"
+  fi
 }
 
 # Verify installed libraries
@@ -79,6 +85,26 @@ verify_installations() {
       echo -e "${RED}${lib} is not installed.${NC}"
     fi
   done
+}
+
+check_clean_input() {
+  local input=$1
+  if [[ "$input" == "clean" || "$input" == "cleanup" || "$input" == "c" ]]; then
+    clean_all_installations
+    return 0
+  elif [[ "$input"  =~ ^(clean|cleanup|c)\ (.+)$ ]]; then
+    args="${BASH_REMATCH[2]}"
+    read -ra choices <<< "$args"
+    for choice in "${choices[@]}"; do
+      if ! [[ "$choice" =~ ^[1-4]$ ]]; then
+        echo -e "${RED}Invalid selection: $choice. Please select numbers between 1 and 4.${NC}"
+        return 1
+      fi
+      clean_installation "${OPTIONS[$((choice-1))]}"
+    done
+    return 0
+  fi
+  return 1
 }
 
 # Validate user selection
@@ -94,14 +120,15 @@ validate_selection() {
     exit 0
   fi
 
-  if [[ "$input" == "clean" ]]; then
-    clean_installations
-    exit 0
+  if check_clean_input "$input"; then
+    sleep 2
+    return 1
   fi
 
-  if [[ "$input" == "verify" ]]; then
+  if [[ "$input" == "verify" || "$input" == "v" ]]; then
     verify_installations
-    exit 0
+    sleep 2
+    return 1
   fi
 
   read -ra choices <<< "$input"
