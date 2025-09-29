@@ -208,7 +208,6 @@ while true; do
 
   echo -e "${GREEN}All selected components have been installed successfully.${NC}"
   echo -e "${GREEN}Thank you for using the SDL Installation Program!${NC}"
-  cleanup
 
   read -p "Do you want to quit the program? (y/n): " exit_choice
   if [[ "$exit_choice" =~ ^[oOyY]$ ]]; then
