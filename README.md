@@ -1,2 +1,5 @@
 # MacOS-SDL-Install-Script
-Two scripts for use SDL in CMake project from installation to create basic CMakeList file
+
+This repository contains one scripts to help you install SDL3, SDL3_image, SDL3_mixer and SDL3_ttf on macOS without using Homebrew.
+
+The other scripts create a basic CMakeFile to compile a simple SDL3 program.
