@@ -216,4 +216,3 @@ while true; do
     break
   fi
 done
-exit 0
