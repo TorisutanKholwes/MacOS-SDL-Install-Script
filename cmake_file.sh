@@ -57,7 +57,7 @@ lib_selection() {
       exit 1
     fi
     if [[ ! " ${SELECTED[*]} " =~ " $choice " ]]; then
-          SELECTED+=("$choice")
+          SELECTED+=($choice-1)
     fi
   done
 }
