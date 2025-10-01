@@ -215,7 +215,7 @@ while true; do
   IFS=$'\n' SELECTED=($(sort -n <<<"${SELECTED[*]}"))
   unset IFS
 
-  echo -e "${BLUE} You have selected the following components for installation:${NC}"
+  echo -e "${BLUE}You have selected the following components for installation:${NC}"
   for choice in "${SELECTED[@]}"; do
     echo -e "${GREEN}- ${OPTIONS[$((choice-1))]}${NC}"
   done
